@@ -1,0 +1,54 @@
+#include <iostream>
+#include <bitset>
+
+using namespace std;
+
+class BloomFilter {
+private:
+    bitset<100> filter;
+
+    int hashFunction1(string key) {
+        int hash = 0;
+        for (char c : key) {
+            hash += c;
+        }
+        return hash % 100;
+    }
+
+    int hashFunction2(string key) {
+        int hash = 0;
+        for (char c : key) {
+            hash += c * 2;
+        }
+        return hash % 100;
+    }
+
+public:
+    void insert(string key) {
+        int index1 = hashFunction1(key);
+        int index2 = hashFunction2(key);
+        filter.set(index1);
+        filter.set(index2);
+    }
+
+    bool lookup(string key) {
+        int index1 = hashFunction1(key);
+        int index2 = hashFunction2(key);
+        return filter.test(index1) && filter.test(index2);
+    }
+};
+
+int main() {
+    BloomFilter bloomFilter;
+
+    
+    bloomFilter.insert("apple");
+    bloomFilter.insert("banana");
+    bloomFilter.insert("cherry");
+
+    
+    cout << "Lookup Result (apple): " << (bloomFilter.lookup("apple") ? "Probably present" : "Definitely not present") << endl;
+    cout << "Lookup Result (orange): " << (bloomFilter.lookup("orange") ? "Probably present" : "Definitely not present") << endl;
+
+    return 0;
+}
